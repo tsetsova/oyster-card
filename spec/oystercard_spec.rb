@@ -28,6 +28,20 @@ describe Oystercard do
     end
   end
 
+  it 'in journey' do
+    expect(subject).not_to be_in_journey
+  end
+
+  it 'lets you touch in' do
+    subject.touch_in
+    expect(subject).to be_in_journey
+  end
+
+  it 'lets you touch out' do
+    subject.touch_in
+    subject.touch_out
+    expect(subject).not_to be_in_journey
+  end
 
 
-end
+  end
