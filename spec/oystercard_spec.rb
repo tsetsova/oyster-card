@@ -6,6 +6,6 @@ it 'can be topped up' do
   oyster = Oystercard.new
 
   oyster.top_up(100)
-  expect(subject.balance).to eq 100
+  expect(oyster.balance).to eq 100
 end
 end
