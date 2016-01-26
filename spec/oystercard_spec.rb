@@ -17,13 +17,6 @@ describe Oystercard do
     end
   end
 
-  describe "deduct" do
-    it 'should deduct amount from balance' do
-      card.top_up(50)
-      expect{card.deduct(10)}.to change{card.balance}.by -10
-    end
-  end
-
   context "in_journey?" do
 
   	before do
@@ -52,6 +45,15 @@ describe Oystercard do
       card.top_up(Oystercard::MIN_FARE/2)
       expect{card.touch_in}.to raise_error 'Insufficient funds'
 
+    end
+  end
+
+  describe "touch_out" do
+
+    it "deducts #{Oystercard::MIN_FARE} from balance" do
+      card.top_up(Oystercard::TOP_UP_LIMIT)
+      card.touch_in
+      expect{card.touch_out}.to change{card.balance}.by(-Oystercard::MIN_FARE)
     end
   end
 
