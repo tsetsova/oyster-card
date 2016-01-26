@@ -22,6 +22,27 @@ describe Oystercard do
       card.top_up(50)
       expect{card.deduct(10)}.to change{card.balance}.by -10
     end
+  end
 
+  context "in_journey?" do
+
+  	before do
+  		card.top_up(Oystercard::TOP_UP_LIMIT)
+  	end
+
+  	 it 'start of journey in_journey? is false' do
+  		expect(card).not_to be_in_journey
+  	end
+
+  	it 'touch in changes in_journey? to true' do
+  		card.touch_in
+  		expect(card).to be_in_journey
+  	end
+
+  	it 'touch out changes in_journey? to false' do
+  		card.touch_in
+  		card.touch_out
+  		expect(card).not_to be_in_journey
+  	end
   end
 end
