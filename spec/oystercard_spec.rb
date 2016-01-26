@@ -2,6 +2,7 @@ require 'oystercard'
 
 describe Oystercard do
   subject(:card){described_class.new}
+  let(:entry_station){double (:entry_station)}
 
     it "new card balance == 0" do
 		  expect(card.balance).to eq 0
@@ -28,12 +29,12 @@ describe Oystercard do
   	end
 
   	it 'touch in changes in_journey? to true' do
-  		card.touch_in
+  		card.touch_in(entry_station)
   		expect(card).to be_in_journey
   	end
 
   	it 'touch out changes in_journey? to false' do
-  		card.touch_in
+  		card.touch_in(entry_station)
   		card.touch_out
   		expect(card).not_to be_in_journey
   	end
@@ -41,21 +42,37 @@ describe Oystercard do
 
   describe "touch_in" do
 
+
     it "raises error if under minimum amount" do
       card.top_up(Oystercard::MIN_FARE/2)
-      expect{card.touch_in}.to raise_error 'Insufficient funds'
-
+      expect{card.touch_in(entry_station)}.to raise_error 'Insufficient funds'
     end
+
+    it "changes entry_station to the entry station" do
+      card.top_up(Oystercard::TOP_UP_LIMIT)
+      expect{card.touch_in(entry_station)}.to change{card.entry_station}.to (entry_station)
+    end
+
   end
 
   describe "touch_out" do
 
-    it "deducts #{Oystercard::MIN_FARE} from balance" do
+    before do
       card.top_up(Oystercard::TOP_UP_LIMIT)
-      card.touch_in
+      card.touch_in(entry_station)
+    end
+
+    it "deducts #{Oystercard::MIN_FARE} from balance" do
       expect{card.touch_out}.to change{card.balance}.by(-Oystercard::MIN_FARE)
     end
+
+    it "resets entry_station to nil" do
+      expect{card.touch_out}.to change{card.entry_station}.to (nil)
+    end
+
   end
+
+
 
 
 
