@@ -1,8 +1,9 @@
 require 'Oystercard'
 
 describe Oystercard do
-
+ let (:entry_station) {double :entry_station}
   it { is_expected. to respond_to{:balance}}
+
 
   describe '#top up' do
 
@@ -28,20 +29,26 @@ describe Oystercard do
   end
 
   it 'in journey' do
-    expect(subject).not_to be_in_journey
+    expect(subject.in_journey?).to eq false
   end
 
-  it 'lets you touch in' do
-    subject.top_up 10
-    subject.touch_in
-    expect(subject).to be_in_journey
+  describe '#touch in' do
+
+    it 'Touch in' do
+      subject.top_up 10
+      subject.touch_in(entry_station)
+      expect(subject.in_journey?).to eq true
+    end
+    it { is_expected.to respond_to(:touch_in).with(1).argument }
+
   end
+
 
   describe '#touch_out' do
-    
+
     before do
       subject.top_up 10
-      subject.touch_in
+      subject.touch_in(entry_station)
     end
 
     it 'lets you touch out' do
@@ -56,10 +63,16 @@ describe Oystercard do
   end
 
   it 'raises an error if balance is less than 1' do
-    expect{subject.touch_in}.to raise_error "Insufficient funds"
+    expect{subject.touch_in(entry_station)}.to raise_error "Insufficient funds"
   end
 
+it 'forgets the entry station' do
+  subject.top_up 10
+  subject.touch_in(entry_station)
+  subject.touch_out
+  expect(subject.entry_station).to eq nil
 
+end
 
 
   end
