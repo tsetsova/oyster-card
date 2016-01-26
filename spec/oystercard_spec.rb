@@ -4,6 +4,7 @@ describe Oystercard do
   subject(:oystercard) {described_class.new}
   let(:entry_station) {double :station}
   let(:exit_station) {double :station}
+  let(:journey) { {entry_station: entry_station, exit_station: exit_station}}
 
   it { is_expected. to respond_to{:balance}}
 
@@ -78,6 +79,11 @@ describe Oystercard do
     it 'stores an exit station' do
       oystercard.touch_out(exit_station)
       expect(oystercard.journey[:exit_station]).to eq exit_station
+    end
+
+    it 'stores a journey' do
+      oystercard.touch_out(exit_station)
+      expect(oystercard.history).to include journey
     end
 
   end
