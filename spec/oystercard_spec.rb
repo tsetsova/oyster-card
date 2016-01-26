@@ -45,4 +45,16 @@ describe Oystercard do
   		expect(card).not_to be_in_journey
   	end
   end
+
+  describe "touch_in" do
+
+    it "raises error if under minimum amount" do
+      card.top_up(Oystercard::MIN_FARE/2)
+      expect{card.touch_in}.to raise_error 'Insufficient funds'
+
+    end
+  end
+
+
+
 end
