@@ -2,9 +2,8 @@ require 'oystercard'
 
 describe Oystercard do
   subject(:card){described_class.new}
-  let(:entry_station){double (:entry_station)}
-  let(:exit_station){double (:exit_station)}
-  let(:journey) { {entry_station: entry_station, exit_station: exit_station} }
+  let(:station){double (:station)}
+  let(:journey) { {entry_station: station, exit_station: station} }
 
   it "new card balance == 0" do
 		  expect(card.balance).to eq 0
@@ -31,13 +30,13 @@ describe Oystercard do
   	end
 
   	it 'touch in changes in_journey? to true' do
-  		card.touch_in(entry_station)
+  		card.touch_in(station)
   		expect(card).to be_in_journey
   	end
 
   	it 'touch out changes in_journey? to false' do
-  		card.touch_in(entry_station)
-  		card.touch_out(exit_station)
+  		card.touch_in(station)
+  		card.touch_out(station)
   		expect(card).not_to be_in_journey
   	end
   end
@@ -46,17 +45,17 @@ describe Oystercard do
 
     it "raises error if under minimum amount" do
       card.top_up(Oystercard::MIN_FARE/2)
-      expect{card.touch_in(entry_station)}.to raise_error 'Insufficient funds'
+      expect{card.touch_in(station)}.to raise_error 'Insufficient funds'
     end
 
     it "changes entry_station to the entry station" do
       card.top_up(Oystercard::TOP_UP_LIMIT)
-      expect{card.touch_in(entry_station)}.to change{card.entry_station}.to (entry_station)
+      expect{card.touch_in(station)}.to change{card.entry_station}.to (station)
     end
 
     it "resets exit_station to nil" do
     	card.top_up(Oystercard::TOP_UP_LIMIT)
-    	card.touch_in(entry_station)
+    	card.touch_in(station)
       expect(card.exit_station).to eq(nil)
     end
 	end
@@ -65,19 +64,19 @@ describe Oystercard do
 
     before do
       card.top_up(Oystercard::TOP_UP_LIMIT)
-      card.touch_in(entry_station)
+      card.touch_in(station)
     end
 
     it "deducts #{Oystercard::MIN_FARE} from balance" do
-      expect{card.touch_out(exit_station)}.to change{card.balance}.by(-Oystercard::MIN_FARE)
+      expect{card.touch_out(station)}.to change{card.balance}.by(-Oystercard::MIN_FARE)
     end
 
     it "resets entry_station to nil" do
-      expect{card.touch_out(exit_station)}.to change{card.entry_station}.to (nil)
+      expect{card.touch_out(station)}.to change{card.entry_station}.to (nil)
     end
 
     it "sets exit_station" do
-      expect{card.touch_out(exit_station)}.to change{card.exit_station}.to (exit_station)
+      expect{card.touch_out(station)}.to change{card.exit_station}.to (station)
     end
 	end
 
@@ -89,8 +88,8 @@ describe Oystercard do
 
 	    it "contains entry and exit station" do
 	    	card.top_up(Oystercard::TOP_UP_LIMIT)
-	      card.touch_in(entry_station)
-	      card.touch_out(exit_station)
+	      card.touch_in(station)
+	      card.touch_out(station)
 	    	expect(card.journeys).to include journey
 	    end
   end
