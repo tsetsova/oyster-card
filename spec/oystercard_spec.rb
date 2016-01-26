@@ -25,7 +25,7 @@ describe Oystercard do
   		card.top_up(Oystercard::TOP_UP_LIMIT)
   	end
 
-  	 it 'start of journey in_journey? is false' do
+  	it 'start of journey in_journey? is false' do
   		expect(card).not_to be_in_journey
   	end
 
@@ -50,13 +50,7 @@ describe Oystercard do
 
     it "changes entry_station to the entry station" do
       card.top_up(Oystercard::TOP_UP_LIMIT)
-      expect{card.touch_in(station)}.to change{card.entry_station}.to (station)
-    end
-
-    it "resets exit_station to nil" do
-    	card.top_up(Oystercard::TOP_UP_LIMIT)
-    	card.touch_in(station)
-      expect(card.exit_station).to eq(nil)
+      expect(card.touch_in(station)).to eq journey[:entry_station]
     end
 	end
 
@@ -71,12 +65,8 @@ describe Oystercard do
       expect{card.touch_out(station)}.to change{card.balance}.by(-Oystercard::MIN_FARE)
     end
 
-    it "resets entry_station to nil" do
-      expect{card.touch_out(station)}.to change{card.entry_station}.to (nil)
-    end
-
     it "sets exit_station" do
-      expect{card.touch_out(station)}.to change{card.exit_station}.to (station)
+      expect(card.touch_out(station)).to include journey
     end
 	end
 
