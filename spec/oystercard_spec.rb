@@ -1,9 +1,13 @@
 require 'oystercard'
 
 describe Oystercard do
-  subject(:card){described_class.new}
-  let(:station){double (:station)}
-  let(:journey) { {entry_station: station, exit_station: station} }
+
+  let(:station) { double (:station) }
+  let(:current_journey) { {entry_station: station, exit_station: station} }
+  let(:Journey) { double(:Journey, new: current_journey) }
+
+  subject(:card) { described_class.new(journey_class: Journey) }
+  
 
   it "new card balance == 0" do
 		  expect(card.balance).to eq 0
@@ -19,28 +23,6 @@ describe Oystercard do
     end
   end
 
-  context "in_journey?" do
-
-  	before do
-  		card.top_up(Oystercard::TOP_UP_LIMIT)
-  	end
-
-  	it 'start of journey in_journey? is false' do
-  		expect(card).not_to be_in_journey
-  	end
-
-  	it 'touch in changes in_journey? to true' do
-  		card.touch_in(station)
-  		expect(card).to be_in_journey
-  	end
-
-  	it 'touch out changes in_journey? to false' do
-  		card.touch_in(station)
-  		card.touch_out(station)
-  		expect(card).not_to be_in_journey
-  	end
-  end
-
   describe "touch_in" do
 
     it "raises error if under minimum amount" do
@@ -50,7 +32,7 @@ describe Oystercard do
 
     it "changes entry_station to the entry station" do
       card.top_up(Oystercard::TOP_UP_LIMIT)
-      expect(card.touch_in(station)).to eq journey[:entry_station]
+      expect(card.touch_in(station)).to eq current_journey[:entry_station]
     end
 	end
 
@@ -66,21 +48,21 @@ describe Oystercard do
     end
 
     it "sets exit_station" do
-      expect(card.touch_out(station)).to include journey
+      expect(card.touch_out(station)).to eq current_journey[:exit_station]
     end
 	end
 
-  describe "history" do
+  # describe "history" do
 
-	    it "has empty history" do
-	    	expect(card.journeys).to be_empty
-	    end
+	 #    it "has empty history" do
+	 #    	expect(card.journeys).to be_empty
+	 #    end
 
-	    it "contains entry and exit station" do
-	    	card.top_up(Oystercard::TOP_UP_LIMIT)
-	      card.touch_in(station)
-	      card.touch_out(station)
-	    	expect(card.journeys).to include journey
-	    end
-  end
+	 #    it "contains entry and exit station" do
+	 #    	card.top_up(Oystercard::TOP_UP_LIMIT)
+	 #      card.touch_in(station)
+	 #      card.touch_out(station)
+	 #    	expect(card.journeys).to include journey
+	 #    end
+  # end
 end
