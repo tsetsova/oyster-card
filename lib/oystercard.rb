@@ -1,4 +1,6 @@
 require_relative 'station'
+require_relative 'journey'
+
 class Oystercard
 
   MAXIMUM_BALANCE = 90
@@ -10,7 +12,7 @@ class Oystercard
   def initialize
     @balance = 0
     @history = []
-    #@journey = Hash.new
+    @journey = Hash.new
   end
 
   def top_up amount
@@ -24,7 +26,7 @@ class Oystercard
 
   def touch_in(station)
     fail "Insufficient funds" if balance < MINIMUM_BALANCE
-    @journey = Hash.new
+    #@journey = Hash.new
     @entry_station = true
     @entry_zone = station.zone
     @journey[:entry_station] = station

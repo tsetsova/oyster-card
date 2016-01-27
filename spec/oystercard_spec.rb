@@ -96,6 +96,14 @@ describe Oystercard do
 
   end
 
+  context 'user failing to touch in or out' do
+
+    # it 'charges a penalty fare if the user does not touch out' do
+    #   oystercard.top_up 10
+    #   expect{2.times{oystercard.touch_in(entry_station)}}.to change{oystercard.balance}.by(-6)
+    # end
+  end
+
   it { is_expected.to respond_to(:touch_out).with(1).argument }
 
   it 'raises an error if balance is less than 1' do
