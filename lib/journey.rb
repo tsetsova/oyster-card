@@ -10,4 +10,8 @@ class Journey
     @exit_station = station
   end
 
+  def start_journey
+    @entry_zone = entry_station.zone
+  end
+
 end
