@@ -15,6 +15,11 @@ describe Oystercard do
     end
   end
 
+  before do
+    allow(entry_station).to receive(:zone).and_return(4)
+    allow(exit_station).to receive(:zone) {2}
+  end
+
 
   describe '#top up' do
 
@@ -38,13 +43,17 @@ describe Oystercard do
 
   describe '#touch in' do
 
-    it 'Touch in' do
+    before do
       oystercard.top_up 10
       oystercard.touch_in(entry_station)
+    end
+
+    it 'Touch in' do
       expect(oystercard.in_journey?).to eq true
     end
-    it { is_expected.to respond_to(:touch_in).with(1).argument }
-
+    it 'can access a station zone via exit_station' do
+      expect(oystercard.entry_zone).to be(4)
+    end
   end
 
 
@@ -53,7 +62,6 @@ describe Oystercard do
     before do
       oystercard.top_up 10
       oystercard.touch_in(entry_station)
-      allow(exit_station).to receive(:zone) {2}
     end
 
     it 'lets you touch out' do

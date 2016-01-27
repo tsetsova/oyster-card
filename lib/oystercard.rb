@@ -5,7 +5,7 @@ class Oystercard
   MINIMUM_BALANCE = 1
   MINIMUM_CHARGE = 1
 
- attr_reader :balance, :entry_station, :history, :exit_station, :journey, :exit_zone
+ attr_reader :balance, :entry_station, :history, :exit_station, :journey, :entry_zone, :exit_zone
 
   def initialize
     @balance = 0
@@ -26,6 +26,7 @@ class Oystercard
     fail "Insufficient funds" if balance < MINIMUM_BALANCE
     @journey = Hash.new
     @entry_station = true
+    @entry_zone = station.zone
     @journey[:entry_station] = station
   end
 
