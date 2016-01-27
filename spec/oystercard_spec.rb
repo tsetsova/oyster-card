@@ -32,13 +32,6 @@ describe Oystercard do
 
   end
 
-  describe '#deduct method' do
-    it 'deduct' do
-      oystercard.top_up 50
-      expect{ oystercard.touch_out(exit_station) }.to change{ oystercard.balance }.by -1
-    end
-  end
-
   it 'in journey' do
     expect(oystercard.in_journey?).to eq false
   end
@@ -60,6 +53,7 @@ describe Oystercard do
     before do
       oystercard.top_up 10
       oystercard.touch_in(entry_station)
+      allow(exit_station).to receive(:zone) {2}
     end
 
     it 'lets you touch out' do
@@ -86,6 +80,12 @@ describe Oystercard do
       expect(oystercard.history).to include journey
     end
 
+    it 'can access a station zone via exit_station' do
+      #allow(exit_station).to receive(:zone) {2}
+      oystercard.touch_out(exit_station)
+      expect(oystercard.exit_zone).to be(2)
+    end
+
   end
 
   it { is_expected.to respond_to(:touch_out).with(1).argument }
@@ -93,7 +93,6 @@ describe Oystercard do
   it 'raises an error if balance is less than 1' do
     expect{oystercard.touch_in(entry_station)}.to raise_error "Insufficient funds"
   end
-
 
 
 
