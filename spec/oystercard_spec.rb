@@ -51,7 +51,7 @@ describe Oystercard do
     it 'Touch in' do
       expect(oystercard.in_journey?).to eq true
     end
-    it 'can access a station zone via exit_station' do
+    it 'can access a station zone via entry_station' do
       expect(oystercard.entry_zone).to be(4)
     end
   end
