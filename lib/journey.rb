@@ -15,7 +15,6 @@ class Journey
 
   def calculate_fare
     return PENALTY_FARE if exit_station.nil? || entry_station.nil?
-    MINIMUM_CHARGE
+    (entry_station.zone-exit_station.zone).abs+MINIMUM_CHARGE
   end
-
 end

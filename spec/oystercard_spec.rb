@@ -23,6 +23,9 @@ describe Oystercard do
   before do
     allow(entry_station).to receive(:zone) { 4 }
     allow(exit_station).to receive(:zone) { 2 }
+    allow(journey).to receive(:calculate_fare) do
+      (entry_station.zone-exit_station.zone).abs+Journey::MINIMUM_CHARGE
+    end
   end
 
   describe '#top up' do
@@ -54,12 +57,17 @@ describe Oystercard do
   describe '#touch_in' do
     context 'when the user has not touched out from their previous journey' do
       before do
+        oystercard.top_up 10
         oystercard.touch_in(entry_station)
       end
       it 'charges the penalty fare' do
         expect do
           oystercard.touch_in(entry_station)
         end.to change { oystercard.balance }.by -Journey::PENALTY_FARE
+      end
+      it 'touches itself out before beginning a new journey' do
+        expect(oystercard).to receive(:touch_out)
+        oystercard.touch_in(entry_station)
       end
     end
 
@@ -92,7 +100,7 @@ describe Oystercard do
       end
     end
 
-    context 'when the user touches is' do
+    context 'when the user touches out' do
       before do
         oystercard.top_up 10
         oystercard.touch_in(entry_station)
@@ -106,7 +114,7 @@ describe Oystercard do
       it 'deducts journey fare' do
         expect do
           oystercard.touch_out(exit_station)
-        end.to change { oystercard.balance }.by(-described_class::MINIMUM_CHARGE)
+        end.to change { oystercard.balance }.by(-journey.calculate_fare)
       end
 
       it 'stores a journey' do

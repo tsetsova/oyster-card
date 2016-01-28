@@ -40,8 +40,9 @@ end
 
     context 'when the user completes a journey' do
       it 'calculates the correct fare' do
+        fare = exit_station.zone - entry_station.zone + Journey::MINIMUM_CHARGE
         journey.end_journey(exit_station)
-        expect(journey.calculate_fare).to eq described_class::MINIMUM_CHARGE
+        expect(journey.calculate_fare).to eq fare
       end
     end
   end
