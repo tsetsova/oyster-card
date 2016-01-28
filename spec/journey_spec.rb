@@ -13,7 +13,7 @@ before do
 end
 
   describe '#initialize' do
-    it 'initializes with an entry_station' do
+    it 'initializes with an entry station' do
       expect(journey.entry_station).to eq entry_station
     end
   end
@@ -30,7 +30,7 @@ end
 
   describe '#calculate_fare' do
     it 'deducts a penalty charge if the user does not touch in or out' do
-      expect(subject.calculate_fare).to eq Journey::PENALTY_FARE
+      expect(subject.calculate_fare).to eq described_class::PENALTY_FARE
     end
   end
 

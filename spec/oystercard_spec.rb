@@ -4,12 +4,19 @@ describe Oystercard do
   subject(:oystercard) {described_class.new}
   let(:entry_station) {double :station}
   let(:exit_station) {double :station}
-  let(:journey) { {entry_station: entry_station, exit_station: exit_station}}
+  let(:journey) { double :journey }
 
   describe '#initialize' do
-    it 'initializes with 0 balance and an empty history' do
+    it 'initializes with 0 balance' do
       expect(oystercard.balance).to eq 0
+    end
+
+    it 'initializes with an empty journey history' do
       expect(oystercard.history).to be_empty
+    end
+
+    it 'initializes with a default status of not in journey' do
+      expect(oystercard.in_journey?).to be_falsey
     end
   end
 
@@ -20,7 +27,7 @@ describe Oystercard do
 
   describe '#top up' do
     it 'adds money to card balance' do
-      expect{ oystercard.top_up 1 }.to change{ oystercard.balance }.by 1
+      expect { oystercard.top_up 1 }.to change { oystercard.balance }.by 1
     end
 
     context "when balance exceeds #{described_class::MAXIMUM_BALANCE}" do
@@ -82,20 +89,9 @@ describe Oystercard do
       end.to change { oystercard.balance }.by(-described_class::MINIMUM_CHARGE)
     end
 
-    it 'resets the current_journey' do
-      oystercard.touch_out(exit_station)
-      expect(oystercard.in_journey?).to be_falsey
-    end
-
-    # FIXME
-    it 'stores an exit station' do
-      oystercard.touch_out(exit_station)
-      expect(oystercard.history[0].values).to include exit_station
-    end
-
     it 'stores a journey' do
       oystercard.touch_out(exit_station)
-      expect(oystercard.history).to include journey
+      expect(oystercard.history).not_to be_empty
     end
   end
 end
