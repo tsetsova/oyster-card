@@ -73,25 +73,36 @@ describe Oystercard do
 
 
   describe '#touch_out' do
-    before do
-      oystercard.top_up 10
-      oystercard.touch_in(entry_station)
-    end
 
-    it 'changes card status to not in journey' do
-      oystercard.touch_out(exit_station)
-      expect(oystercard).not_to be_in_journey
-    end
-
-    it 'deducts journey fare' do
-      expect do
+    context 'If the user does not touch in' do
+      it 'creates a new journey with no entry station' do
         oystercard.touch_out(exit_station)
-      end.to change { oystercard.balance }.by(-described_class::MINIMUM_CHARGE)
+        expect(oystercard.history).not_to be_empty
+      end
     end
 
-    it 'stores a journey' do
-      oystercard.touch_out(exit_station)
-      expect(oystercard.history).not_to be_empty
+    context 'when the user touches is' do
+      before do
+        oystercard.top_up 10
+        oystercard.touch_in(entry_station)
+      end
+
+      it 'changes card status to not in journey' do
+        oystercard.touch_out(exit_station)
+        expect(oystercard).not_to be_in_journey
+      end
+
+      it 'deducts journey fare' do
+        expect do
+          oystercard.touch_out(exit_station)
+        end.to change { oystercard.balance }.by(-described_class::MINIMUM_CHARGE)
+      end
+
+      it 'stores a journey' do
+        oystercard.touch_out(exit_station)
+        expect(oystercard.history).not_to be_empty
+      end
     end
   end
+
 end

@@ -29,6 +29,7 @@ class Oystercard
   end
 
   def touch_out(station)
+    @journey = Journey.new if @journey.nil?
     @journey.end_journey station
     deduct MINIMUM_CHARGE
     journey_log
