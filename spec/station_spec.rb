@@ -14,9 +14,5 @@ describe Station do
     it 'initializes with a zone' do
       expect(subject.zone).to be 2
     end
-
-    it 'can have its attributes changed' do
-
-    end
   end
 end
