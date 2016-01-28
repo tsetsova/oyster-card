@@ -1,19 +1,20 @@
 class Journey
-	attr_reader :journey
+	attr_reader :log
 
 	def initialize
-		@journey = {}
+		@log = {}
 	end
 
   def in_progress?
-  	@journey.has_key?(:entry_station) && !@journey.has_key?(:exit_station)
+  	@log.has_key?(:entry_station) && !@log.has_key?(:exit_station)
   end
 
   def starts(station)
-  	@journey[:entry_station] = station #if in_progress?
+  	@log[:entry_station] = station
   end
 
   def ends(station)
-  	@journey[:exit_station] = station #if in_progress?
+  	@log[:exit_station] = station
   end
+
 end

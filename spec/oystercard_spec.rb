@@ -2,11 +2,11 @@ require 'oystercard'
 
 describe Oystercard do
 
-  subject(:card) { described_class.new(journey_class: Journey) }
-  let(:Journey) { double(:Journey, new: current_journey) }
+  subject(:card) { described_class.new(journey_class: journey_class) }
+  let(:current_journey) {double(:current_journey, :starts => nil, :ends => nil, :log => {})}
   let(:station) { double (:station) }
-  # let(:current_journey) { double(:current_journey, :starts => nil) } #å
-  let(:current_journey) { {} }
+  let(:journey_class) { double(:journey_class, new: current_journey) }
+
   it "new card balance == 0" do
 		  expect(card.balance).to eq 0
   end
@@ -28,7 +28,7 @@ describe Oystercard do
       expect{card.touch_in(station)}.to raise_error 'Insufficient funds'
     end
 
-    xit "starts a journey" do
+    it "starts a journey" do
       card.top_up(Oystercard::TOP_UP_LIMIT)
       expect(current_journey).to receive(:starts)
       card.touch_in(station)
@@ -51,6 +51,11 @@ describe Oystercard do
       expect{card.touch_out(station)}.to change{card.balance}.by(-Oystercard::PENALTY_FARE)
     end
 
+    it "ends a journey" do
+      card.touch_in(station)
+      expect(current_journey).to receive(:ends)
+      card.touch_out(station)
+    end
 
     it "deducts #{Oystercard::MIN_FARE} from balance" do
       card.touch_in(station)
@@ -70,7 +75,7 @@ describe Oystercard do
 
       it "creates a new journey for no touch in" do
         card.touch_out(station)
-        expect(current_journey).not_to have_value(station)
+        expect(current_journey.log).not_to have_value(station)
       end
 
     end
