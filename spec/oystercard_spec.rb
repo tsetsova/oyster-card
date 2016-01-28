@@ -52,6 +52,17 @@ describe Oystercard do
   end
 
   describe '#touch_in' do
+    context 'when the user has not touched out from their previous journey' do
+      before do
+        oystercard.touch_in(entry_station)
+      end
+      it 'charges the penalty fare' do
+        expect do
+          oystercard.touch_in(entry_station)
+        end.to change { oystercard.balance }.by -Journey::PENALTY_FARE
+      end
+    end
+
     context "when balance is less than #{described_class::MINIMUM_CHARGE}" do
       let(:empty_card) { described_class.new }
       it 'raises an error' do
