@@ -17,4 +17,12 @@ class Journey
   	@log[:exit_station] = station
   end
 
+  def counts_zones #<-----test entire function
+  ((@log[:entry_station]).zone - (@log[:exit_station]).zone).abs
+  end
+
+  def complete?
+  	@log.has_key?(:entry_station) && @log.has_key?(:exit_station)
+  end
+
 end
