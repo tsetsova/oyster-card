@@ -2,13 +2,11 @@ require 'oystercard'
 
 describe Oystercard do
 
-  let(:station) { double (:station) }
-  let(:current_journey) { {entry_station: station, exit_station: station} }
-  let(:Journey) { double(:Journey, new: current_journey) }
-
   subject(:card) { described_class.new(journey_class: Journey) }
-
-
+  let(:Journey) { double(:Journey, new: current_journey) }
+  let(:station) { double (:station) }
+  # let(:current_journey) { double(:current_journey, :starts => nil) } #å
+  let(:current_journey) { {} }
   it "new card balance == 0" do
 		  expect(card.balance).to eq 0
   end
@@ -30,12 +28,13 @@ describe Oystercard do
       expect{card.touch_in(station)}.to raise_error 'Insufficient funds'
     end
 
-    it "changes entry_station to the entry station" do
+    xit "starts a journey" do
       card.top_up(Oystercard::TOP_UP_LIMIT)
-      expect(card.touch_in(station)).to eq current_journey[:entry_station]
+      expect(current_journey).to receive(:starts)
+      card.touch_in(station)
     end
 
-    it 'raises error if touched in twice in a row' do
+    it "raises error if touched in twice in a row" do
       card.top_up(Oystercard::TOP_UP_LIMIT)
       card.touch_in(station)
       expect {card.touch_in(station)}.to change{card.balance}.by(-Oystercard::PENALTY_FARE)
@@ -58,9 +57,22 @@ describe Oystercard do
       expect{card.touch_out(station)}.to change{card.balance}.by(-Oystercard::MIN_FARE)
     end
 
-    it "sets exit_station" do
-      card.touch_in(station)
-      expect(card.touch_out(station)).to eq current_journey[:exit_station]
+    context "edge cases after legal journey" do
+
+      before do
+        card.touch_in(station)
+        card.touch_out(station)
+      end
+
+      it "charges penalty fare if no touch in after legal journey" do
+        expect{card.touch_out(station)}.to change{card.balance}.by(-Oystercard::PENALTY_FARE)
+      end
+
+      it "creates a new journey for no touch in" do
+        card.touch_out(station)
+        expect(current_journey).not_to have_value(station)
+      end
+
     end
 	end
 end

@@ -11,6 +11,7 @@ class Oystercard
 		# @journeys = []
 		@journey_class = journey_class
 		@station = station
+    @touched_in = false
 	end
 
 	def top_up(amount)
@@ -27,18 +28,19 @@ class Oystercard
   end
 
   def touch_out(station)
-		return deduct(PENALTY_FARE) if @touched_in == nil
+    
+		return deduct(PENALTY_FARE) if @touched_in == false
   	deduct(MIN_FARE)
+    @touched_in = false
   	@current_journey.ends(station)
   	# @journeys << @journey
 	end
 
-	def touched_in?
-		@touched_in
-  end
-
-
   private
+
+  def touched_in?
+    @touched_in
+  end
 
   def deduct(amount)
   	@balance -= amount
