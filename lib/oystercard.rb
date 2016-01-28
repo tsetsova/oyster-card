@@ -2,14 +2,14 @@ require_relative "journey"
 
 class Oystercard
 	attr_reader :balance, :station
+
 	TOP_UP_LIMIT = 90
 	MIN_FARE = 1
 	PENALTY_FARE = 6
 
-	def initialize(journey_class: Journey)
+	def initialize(journey_log_class: JourneyLog)
 		@balance = 0
-		# @journeys = []
-		@journey_class = journey_class
+		@journey_log = journey_log_class.new
 		@station = station
     @touched_in = false
 	end
@@ -21,19 +21,17 @@ class Oystercard
 
   def touch_in(station)
   	fail 'Insufficient funds' if @balance < MIN_FARE
+    @journey_log.starts(station)
 		return deduct(PENALTY_FARE) if @touched_in == true
-    @current_journey = @journey_class.new
+    # @current_journey = @journey_log_class.new
 		@touched_in = true
-  	@current_journey.starts(station)
   end
 
   def touch_out(station)
-    
+    @journey_log.ends(station)
 		return deduct(PENALTY_FARE) if @touched_in == false
   	deduct(MIN_FARE)
     @touched_in = false
-  	@current_journey.ends(station)
-  	# @journeys << @journey
 	end
 
   private

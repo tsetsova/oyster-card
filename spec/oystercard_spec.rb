@@ -2,10 +2,10 @@ require 'oystercard'
 
 describe Oystercard do
 
-  subject(:card) { described_class.new(journey_class: journey_class) }
-  let(:current_journey) {double(:current_journey, :starts => nil, :ends => nil, :log => {})}
+  subject(:card) { described_class.new(journey_log_class: journey_log_class) }
+  let(:journey_log) {double(:journey_log, :starts => nil, :ends => nil, :log => {})}
   let(:station) { double (:station) }
-  let(:journey_class) { double(:journey_class, new: current_journey) }
+  let(:journey_log_class) { double(:journey_log_class, new: journey_log) }
 
   it "new card balance == 0" do
 		  expect(card.balance).to eq 0
@@ -30,7 +30,7 @@ describe Oystercard do
 
     it "starts a journey" do
       card.top_up(Oystercard::TOP_UP_LIMIT)
-      expect(current_journey).to receive(:starts)
+      expect(journey_log).to receive(:starts)
       card.touch_in(station)
     end
 
@@ -53,7 +53,7 @@ describe Oystercard do
 
     it "ends a journey" do
       card.touch_in(station)
-      expect(current_journey).to receive(:ends)
+      expect(journey_log).to receive(:ends)
       card.touch_out(station)
     end
 
@@ -75,7 +75,7 @@ describe Oystercard do
 
       it "creates a new journey for no touch in" do
         card.touch_out(station)
-        expect(current_journey.log).not_to have_value(station)
+        expect(journey_log.log).not_to have_value(station)
       end
 
     end
