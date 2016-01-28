@@ -82,16 +82,16 @@ describe Oystercard do
       end.to change { oystercard.balance }.by(-described_class::MINIMUM_CHARGE)
     end
 
-    it 'resets the entry station' do
+    it 'resets the current_journey' do
       oystercard.touch_out(exit_station)
-      expect(oystercard.entry_station).to eq nil
+      expect(oystercard.in_journey?).to be_falsey
     end
 
     # FIXME
-    # it 'stores an exit station' do
-    #   oystercard.touch_out(exit_station)
-    #   expect(oystercard.history.first.keys).to include exit_station
-    # end
+    it 'stores an exit station' do
+      oystercard.touch_out(exit_station)
+      expect(oystercard.history[0].values).to include exit_station
+    end
 
     it 'stores a journey' do
       oystercard.touch_out(exit_station)

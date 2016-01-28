@@ -4,7 +4,6 @@ require_relative 'journey'
 class Oystercard
 
   MAXIMUM_BALANCE = 90
-  MINIMUM_BALANCE = 1
   MINIMUM_CHARGE = 1
 
   # TODO: remove some readers
@@ -13,8 +12,11 @@ class Oystercard
   def initialize
     @balance = 0
     @history = []
+    @entry_station = nil
+    @exit_station = nil
     # TODO: implement Journey obj
     @journey = Hash.new
+    @current_journey = nil
   end
 
   def top_up amount
@@ -23,26 +25,26 @@ class Oystercard
   end
 
    def in_journey?
-     # TODO: journey
-     !entry_station.nil?
+     !@current_journey.nil?
    end
 
   def touch_in(station)
-    fail "Insufficient funds" if balance < MINIMUM_BALANCE
+    fail "Insufficient funds" if balance < MINIMUM_CHARGE
     #@journey = Hash.new
     # TODO: journey
     @entry_station = true
-    @entry_zone = station.zone
+    @current_journey = Journey.new station
     @journey[:entry_station] = station
   end
 
   def touch_out(station)
     @entry_station = nil
+    @current_journey.end_journey(station)
     deduct MINIMUM_CHARGE
     @journey[:exit_station] = station
+    journey_log
+    @current_journey = nil
     @exit_zone = station.zone
-    @history << @journey
-    # @journey = Hash.new
   end
 
   private
@@ -50,4 +52,7 @@ class Oystercard
     @balance -= amount
   end
 
+  def journey_log
+    @history << @journey
+  end
 end
