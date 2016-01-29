@@ -7,8 +7,19 @@ class Journey_log
     @log_history = []
   end
 
-  def start_journey station
+  def start_journey(station)
     @journey = Journey.new
-    @entry_station = station
+  end
+
+  def end_journey(station)
+  	@journey.end_journey(station)
+  end
+
+  def collects_log
+  	@log_history << @journey
+  end
+
+  def view_history
+  	@log_history.dup
   end
 end
